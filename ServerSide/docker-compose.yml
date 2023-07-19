@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  serverside:
+    image: ${DOCKER_REGISTRY-}serverside
+    build:
+      context: .
+      dockerfile: ServerSide/Dockerfile
+    volumes:
+        - ./reportContainer:/app/Reports

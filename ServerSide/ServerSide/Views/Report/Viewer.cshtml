@@ -1,0 +1,33 @@
+﻿@using DevExpress.AspNetCore;
+@using ServerSide.PredefinedReports
+@model DevExpress.XtraReports.UI.XtraReport
+
+@{
+    ViewData["Title"] = "Viewer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    bool autoPrint = false;
+    if (ViewBag.autoPrint)
+    {
+        autoPrint = (bool)ViewBag.autoPrint;
+    }
+    if (Model != null)
+    {
+        Model.RequestParameters = false;
+    }
+}
+
+
+@{
+    var viewerRender = Html.DevExpress().WebDocumentViewer("DocumentViewer")
+        .Height("1000px")
+        .Bind(Model);
+    @viewerRender.RenderHtml()
+}
+@section Scripts {
+    <link href="~/css/dx-reporting-skeleton-screen.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/viewer.part.bundle.css" />
+    <script src="~/js/reporting.thirdparty.bundle.js"></script>
+    <script src="~/js/viewer.part.bundle.js"></script>
+
+    @viewerRender.RenderScripts()
+}

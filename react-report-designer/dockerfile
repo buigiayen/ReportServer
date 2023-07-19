@@ -1,0 +1,7 @@
+# build stage
+FROM node:16.16.0 as build-stage
+WORKDIR /app
+COPY . .
+RUN npm install
+CMD [ "npm" , "run" , "start" ]
+
