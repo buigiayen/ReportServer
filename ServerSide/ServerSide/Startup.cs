@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using ServerSide.infrastructure;
 using ServerSide.Services;
 using System;
 
@@ -57,6 +58,9 @@ namespace ServerSide
                 });
 
             });
+            services.AddTransient<StreamReport>();
+            services.AddTransient<JsonToDataTable>();
+            services.AddTransient<ReportExport>();
             // ..
             services.AddSwaggerGen(c =>
             {
