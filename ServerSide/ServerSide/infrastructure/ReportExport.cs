@@ -1,10 +1,7 @@
-﻿using DevExpress.DataAccess.ObjectBinding;
-using DevExpress.Xpo.DB.Helpers;
+﻿using DevExpress.DataAccess.Json;
 using DevExpress.XtraReports.UI;
-using DevExpress.XtraRichEdit.Commands;
-using Microsoft.Extensions.FileProviders;
-using ServerSide.Models;
 using System;
+using System.Data;
 using System.IO;
 using System.Threading.Tasks;
 using static ServerSide.Data.FileExtension;
@@ -19,21 +16,21 @@ namespace ServerSide.infrastructure
             this.streamReport = streamReport;
         }
 
-        public async Task<Stream> ExportReport(string UrlReport, string JsonFormater, string TableName, Extension extension )
+        public async Task<Stream> ExportReport(string UrlReport, string JsonFormater, string TableName, Extension extension)
         {
             switch (extension)
             {
                 case Extension.PDF:
-                    return await ExportPDF(UrlReport , JsonFormater , TableName);
+                    return await ExportPDF(UrlReport, JsonFormater, TableName);
                 case Extension.WORD:
                     return await ExportToDocx(UrlReport, JsonFormater, TableName);
                 case Extension.EXCEL:
-                    return await ExportToDocx(UrlReport, JsonFormater, TableName);
+                    return await ExportToExcel(UrlReport, JsonFormater, TableName);
                 default:
                     throw new Exception("Extension not found");
             }
         }
-        private  async Task<Stream> ExportPDF(string UrlReport, string JsonFormater, string TableName)
+        private async Task<Stream> ExportPDF(string UrlReport, string JsonFormater, string TableName)
         {
             var xtraReport = await ExportXtraReport(UrlReport, JsonFormater, TableName);
             Stream memoryStream = new MemoryStream();
@@ -49,19 +46,28 @@ namespace ServerSide.infrastructure
             memoryStream.Position = 0;
             return memoryStream;
         }
+        private async Task<Stream> ExportToExcel(string UrlReport, string JsonFormater, string TableName)
+        {
+            var xtraReport = await ExportXtraReport(UrlReport, JsonFormater, TableName);
+            Stream memoryStream = new MemoryStream();
+            xtraReport.ExportToXlsx(memoryStream);
+            memoryStream.Position = 0;
+            return memoryStream;
+        }
         private async Task<XtraReport> ExportXtraReport(string UrlPath, string JsonFormater, string TableName)
         {
             var FileReport = streamReport.GetFileStreamFromUrl(UrlPath);
             JsonToDataTable jsonToDataTable = new JsonToDataTable();
             XtraReport xtraReport = new XtraReport();
             xtraReport.LoadLayout(FileReport);
-            ObjectDataSource objectDataSource = new ObjectDataSource();
-            objectDataSource.DataSource = jsonToDataTable.JsonToDataTableNew(JsonFormater, TableName);
-            xtraReport.DataSource = objectDataSource;
+            JsonDataSource JsonDataSource = new JsonDataSource();
+            JsonDataSource.JsonSource = new CustomJsonSource(JsonFormater);
+            xtraReport.DataSource = JsonDataSource;
+            xtraReport.DataMember = TableName;
             xtraReport.CreateDocument();
             return xtraReport;
         }
-
+     
     }
 }
 

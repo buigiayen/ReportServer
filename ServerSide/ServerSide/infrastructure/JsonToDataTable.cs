@@ -1,6 +1,12 @@
 ﻿
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System;
 using System.Data;
+using System.Dynamic;
+using System.Linq;
+using DevExpress.Xpo.DB.Helpers;
 
 namespace ServerSide.infrastructure
 {
@@ -35,7 +41,7 @@ namespace ServerSide.infrastructure
                 while (jtoken != null)
                 {
                     var jprop = jtoken as JProperty;
-                    dr[jprop.Name] = jprop.Value.ToString();
+                    dr[jprop.Name] = (object)(jprop.Value);
                     jtoken = jtoken.Next;
                 }
 
@@ -43,6 +49,16 @@ namespace ServerSide.infrastructure
             }
 
             return dt;
+        }
+        public void TestJson()
+        {
+            string json = " {\r\n  name : 'table',\r\n  arr:[\r\n    {\r\n      tagert: \"paer\"\r\n    },\r\n     {\r\n      tagert: \"paer2\"\r\n    }\r\n  ]\r\n}";
+            dynamic myData = JsonConvert.DeserializeAnonymousType(json, new ExpandoObject());
+
+            Dictionary<string, Object> myDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+
+            var dic = myDict.ToList();
+
         }
     }
 }

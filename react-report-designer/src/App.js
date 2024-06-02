@@ -6,9 +6,9 @@ import './App.css';
 class ReportDesigner extends React.Component {
   constructor(props) {
     super(props);
-    this.reportUrl = ko.observable("Rp_dkhienmau");
+    this.reportUrl = ko.observable("Report1");
     this.requestOptions = {
-      host: "https://hienmau.bvdktinhthanhhoa.com.vn:9874/rp/",
+      host: "https://localhost:44312/",
       getDesignerModelAction: "ReportDesigner/GetReportDesignerModel"
     };
   }

@@ -10,24 +10,27 @@
 		<EmbeddedResource Remove="Reports\ReportBlank.resx" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Remove="Reports\Report1.repx" />
 		<None Remove="Reports\Report2.repx" />
 		<None Remove="Reports\ReportBlank.repx" />
 	</ItemGroup>
 	<ItemGroup>
+	  <EmbeddedResource Include="Reports\Report1.repx" />
 	  <EmbeddedResource Include="Reports\ReportBlank.repx" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="DevExpress.AspNetCore.Reporting" Version="22.1.3" />
 		<PackageReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Update="Reports\Report2.cs">
-			<DependentUpon>Report2.repx</DependentUpon>
+		<Compile Update="Reports\Report1.cs">
+		  <DependentUpon>Report1.repx</DependentUpon>
 		</Compile>
-		<Compile Update="Reports\Report2.Designer.cs">
-			<DependentUpon>Report2.repx</DependentUpon>
+		<Compile Update="Reports\Report1.Designer.cs">
+		  <DependentUpon>Report1.repx</DependentUpon>
 		</Compile>
 		<Compile Update="Reports\ReportBlank.cs">
 		  <DependentUpon>ReportBlank.repx</DependentUpon>

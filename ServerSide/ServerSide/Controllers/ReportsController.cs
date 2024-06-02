@@ -24,8 +24,8 @@ namespace ServerSide.Controllers
         [HttpPost("ReportView/PDF")]
         public async Task<IActionResult> PDfExports([FromBody] RequestReport requestReport)
         {
-            string Formater = @"{""" + requestReport.TableName + "\" : " + requestReport.DataReport + " }";   
-            var reportStream = await reportExport.ExportReport(requestReport.ReportURL, Formater, requestReport.TableName, Data.FileExtension.Extension.PDF);
+        
+            var reportStream = await reportExport.ExportReport(requestReport.ReportURL, requestReport.DataReport, requestReport.TableName, Data.FileExtension.Extension.PDF);
             return File(reportStream, "application/pdf");
         }
         [HttpPost("ReportView/Word")]
