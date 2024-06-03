@@ -1,4 +1,6 @@
 ﻿using DevExpress.DataAccess.Json;
+using DevExpress.DataAccess.ObjectBinding;
+using DevExpress.Xpo.DB.Helpers;
 using DevExpress.XtraReports.UI;
 using System;
 using System.Data;
@@ -15,7 +17,7 @@ namespace ServerSide.infrastructure
         {
             this.streamReport = streamReport;
         }
-
+       
         public async Task<Stream> ExportReport(string UrlReport, string JsonFormater, string TableName, Extension extension)
         {
             switch (extension)
@@ -29,6 +31,18 @@ namespace ServerSide.infrastructure
                 default:
                     throw new Exception("Extension not found");
             }
+        }
+        public async Task<string> CreateReport(string JsonFormater)
+        {
+            string fileTemp = Path.GetTempFileName().Replace(".tmp",".repx");
+            XtraReport xtraReport = new XtraReport();
+            xtraReport.CreateDocument();
+            JsonDataSource JsonDataSource = new JsonDataSource();
+            JsonDataSource.JsonSource = new CustomJsonSource(JsonFormater);
+            JsonDataSource.Fill();
+            xtraReport.DataSource = JsonDataSource;
+            xtraReport.SaveLayoutToXml(fileTemp);
+            return fileTemp;
         }
         private async Task<Stream> ExportPDF(string UrlReport, string JsonFormater, string TableName)
         {
@@ -57,17 +71,17 @@ namespace ServerSide.infrastructure
         private async Task<XtraReport> ExportXtraReport(string UrlPath, string JsonFormater, string TableName)
         {
             var FileReport = streamReport.GetFileStreamFromUrl(UrlPath);
-            JsonToDataTable jsonToDataTable = new JsonToDataTable();
             XtraReport xtraReport = new XtraReport();
             xtraReport.LoadLayout(FileReport);
             JsonDataSource JsonDataSource = new JsonDataSource();
             JsonDataSource.JsonSource = new CustomJsonSource(JsonFormater);
+            JsonDataSource.Fill();
             xtraReport.DataSource = JsonDataSource;
             xtraReport.DataMember = TableName;
             xtraReport.CreateDocument();
             return xtraReport;
         }
-     
+
     }
 }
 

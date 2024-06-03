@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using ServerSide.infrastructure;
 using ServerSide.Models;
 using System.Threading.Tasks;
-using System;
-using DevExpress.XtraReports.Web.WebDocumentViewer.Native.Services;
+
 
 namespace ServerSide.Controllers
 {
@@ -24,7 +22,6 @@ namespace ServerSide.Controllers
         [HttpPost("ReportView/PDF")]
         public async Task<IActionResult> PDfExports([FromBody] RequestReport requestReport)
         {
-        
             var reportStream = await reportExport.ExportReport(requestReport.ReportURL, requestReport.DataReport, requestReport.TableName, Data.FileExtension.Extension.PDF);
             return File(reportStream, "application/pdf");
         }
@@ -34,6 +31,13 @@ namespace ServerSide.Controllers
             string Formater = @"{""" + requestReport.TableName + "\" : " + requestReport.DataReport + " }";
             var reportStream = await reportExport.ExportReport(requestReport.ReportURL, Formater, requestReport.TableName, Data.FileExtension.Extension.WORD);
             return File(reportStream, "application/vnd.openxmlformats-officedocument.wordprocessingml.document","Filename.docx");
+        }
+        [HttpPost("ReportView/Create")]
+        public async Task<IActionResult> CreateReport([FromBody] RequestReport requestReport)
+        {
+           
+            var reportStream = await reportExport.CreateReport(requestReport.DataReport);
+            return File(reportStream, "application/octet-stream", "ReportBlank.repx");
         }
     }
 }
