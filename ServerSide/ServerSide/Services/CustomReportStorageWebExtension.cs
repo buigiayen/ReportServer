@@ -18,7 +18,7 @@ namespace ServerSide.Services
     {
         readonly string ReportDirectory;
         const string FileExtension = ".repx";
-        public CustomReportStorageWebExtension(IHostingEnvironment env)
+        public CustomReportStorageWebExtension(IWebHostEnvironment env)
         {
             ReportDirectory = Path.Combine(env.ContentRootPath, "Reports");
             if (!Directory.Exists(ReportDirectory))
