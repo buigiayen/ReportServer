@@ -41,13 +41,12 @@ builder.Services.AddCors();
 
 
 var app = builder.Build();
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "System.api v1"));
-    app.UseDeveloperExceptionPage();
-}
-app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed(origin => true).AllowCredentials()); 
+
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "System.api v1"));
+app.UseDeveloperExceptionPage();
+
+app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed(origin => true).AllowCredentials());
 app.UseCookiePolicy();
 app.UseSession();
 app.MapControllers();
