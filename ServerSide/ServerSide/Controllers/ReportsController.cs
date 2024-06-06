@@ -1,7 +1,13 @@
 ﻿
+using DevExpress.CodeParser.Diagnostics;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Logging;
+using Serilog.Core;
 using ServerSide.infrastructure;
 using ServerSide.Models;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 
@@ -12,32 +18,52 @@ namespace ServerSide.Controllers
     public class ReportsController : ControllerBase
     {
         private ReportExport reportExport;
-        private StreamReport streamReport;
-      
-        public ReportsController( StreamReport streamReport,  ReportExport reportExport)
+        private ILogger<ReportsController> logger;
+
+        public ReportsController(ReportExport reportExport, ILogger<ReportsController> logger)
         {
-            this.streamReport = streamReport;
             this.reportExport = reportExport;
-        }
-        [HttpPost("ReportView/PDF")]
-        public async Task<IActionResult> PDfExports([FromBody] RequestReport requestReport)
-        {
-            var reportStream = await reportExport.ExportReport(requestReport.ReportURL, requestReport.DataReport, requestReport.TableName, Data.FileExtension.Extension.PDF);
-            return File(reportStream, "application/pdf");
-        }
-        [HttpPost("ReportView/Word")]
-        public async Task<IActionResult> WordExport([FromBody] RequestReport requestReport)
-        {
-            string Formater = @"{""" + requestReport.TableName + "\" : " + requestReport.DataReport + " }";
-            var reportStream = await reportExport.ExportReport(requestReport.ReportURL, Formater, requestReport.TableName, Data.FileExtension.Extension.WORD);
-            return File(reportStream, "application/vnd.openxmlformats-officedocument.wordprocessingml.document","Filename.docx");
+            this.logger = logger;
         }
         [HttpPost("ReportView/Create")]
         public async Task<IActionResult> CreateReport([FromBody] RequestReport requestReport)
         {
-           
+            logger.LogDebug("Create Report");
             var reportStream = await reportExport.CreateReport(requestReport.DataReport);
             return File(reportStream, "application/octet-stream", "ReportBlank.repx");
         }
+
+        [HttpPost("ReportView/PDF/Preview")]
+        public async Task<IActionResult> PDfPreview([FromBody] RequestReport requestReport)
+        {
+            logger.LogDebug("Preview Report");
+            var reportStream = await reportExport.ExportReport(requestReport, Data.FileExtension.Extension.PDF);
+            return File(reportStream, MediaTypeNames.Application.Pdf);
+        }
+
+        [HttpPost("ReportView/PDF")]
+        public async Task<IActionResult> PDfExports([FromBody] RequestReport requestReport)
+        {
+            logger.LogDebug("Export PDF");
+            var reportStream = await reportExport.ExportReport(requestReport, Data.FileExtension.Extension.PDF);
+            return File(reportStream, "application/octet-stream", "Filename.pdf");
+        }
+
+        [HttpPost("ReportView/Word")]
+        public async Task<IActionResult> WordExport([FromBody] RequestReport requestReport)
+        {
+            logger.LogDebug("Export Word");
+            var reportStream = await reportExport.ExportReport(requestReport, Data.FileExtension.Extension.WORD);
+            return File(reportStream, "application/octet-stream", "Filename.docx");
+        }
+
+        [HttpPost("ReportView/Excel")]
+        public async Task<IActionResult> ExcelExport([FromBody] RequestReport requestReport)
+        {
+            logger.LogDebug("Export Excel");
+            var reportStream = await reportExport.ExportReport(requestReport, Data.FileExtension.Extension.EXCEL);
+            return File(reportStream, "application/octet-stream", "Filename.xlsx");
+        }
+
     }
 }

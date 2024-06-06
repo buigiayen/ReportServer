@@ -9,5 +9,7 @@ namespace ServerSide.Models
         public string DataReport { get; set; }
         public string TableName { get; set; } = "DataTable";
         public string ReportTilte { get; set; } = Guid.NewGuid().ToString();
+        public string Password { get; set; }
+
     }
 }
