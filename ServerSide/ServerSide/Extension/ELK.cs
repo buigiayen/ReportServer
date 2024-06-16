@@ -9,7 +9,7 @@ public static class RegisterServices
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .WriteTo.Debug()
-            .WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day , restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
+            .WriteTo.File(@"logs\", rollingInterval: RollingInterval.Day , restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
             .MinimumLevel.Verbose()
             .WriteTo.Elasticsearch("http://localhost:9200",
             AppDomain.CurrentDomain.FriendlyName).CreateLogger();
