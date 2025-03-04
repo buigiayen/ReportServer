@@ -22,7 +22,7 @@ namespace ServerSide.infrastructure
         public async Task<Stream> ExportReport(RequestReport requestReport, Extension extension)
         {
             var xtraReport = await ExportXtraReport(requestReport.ReportURL, requestReport.DataReport, requestReport.TableName);
-            if(!string.IsNullOrEmpty(requestReport.Password) && extension != Extension.PDF ) { throw new InvalidDataException("Password only allowed in PDF");}
+            if (!string.IsNullOrEmpty(requestReport.Password) && extension != Extension.PDF) { throw new InvalidDataException("Password only allowed in PDF"); }
             switch (extension)
             {
                 case Extension.PDF:
@@ -30,7 +30,7 @@ namespace ServerSide.infrastructure
                     return await ExportPDF(xtraReport);
                 case Extension.WORD:
                     return await ExportWord(xtraReport);
-                case Extension.EXCEL:             
+                case Extension.EXCEL:
                     return await ExportExcel(xtraReport);
                 default:
                     throw new Exception("Extension not found");
@@ -50,24 +50,31 @@ namespace ServerSide.infrastructure
         }
         private async Task<Stream> ExportPDF(XtraReport xtraReport)
         {
-            Stream memoryStream = new MemoryStream();
-            xtraReport.ExportToPdf(memoryStream);
-            memoryStream.Position = 0;
-            return memoryStream;
+            using (Stream memoryStream = new MemoryStream())
+            {
+                xtraReport.ExportToPdf(memoryStream);
+                memoryStream.Position = 0;
+                return memoryStream;
+            }
         }
         private async Task<Stream> ExportWord(XtraReport xtraReport)
         {
-            Stream memoryStream = new MemoryStream();
-            xtraReport.ExportToDocx(memoryStream);
-            memoryStream.Position = 0;
-            return memoryStream;
+            using (Stream memoryStream = new MemoryStream())
+            {
+                xtraReport.ExportToDocx(memoryStream);
+                memoryStream.Position = 0;
+                return memoryStream;
+            }
         }
         private async Task<Stream> ExportExcel(XtraReport xtraReport)
-        {   
-            Stream memoryStream = new MemoryStream();
-            xtraReport.ExportToXlsx(memoryStream);
-            memoryStream.Position = 0;
-            return memoryStream;
+        {
+            using (Stream memoryStream = new MemoryStream())
+            {
+                xtraReport.ExportToXlsx(memoryStream);
+                memoryStream.Position = 0;
+                return memoryStream;
+            }
+
         }
         private async Task<XtraReport> ExportXtraReport(string UrlPath, string JsonFormater, string TableName)
         {
